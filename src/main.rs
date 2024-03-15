@@ -16,28 +16,11 @@ fn main(){
     }
 }
 
-fn handle_connection(mut stream: TcpStream){
+fn handle_connection(stream:  TcpStream){
     println!("Handling connection");
     let buf_reader = BufReader::new(&stream);
     let mut lines = buf_reader.lines();
-
-    match lines.next() {
-        Some(line) => {
-            match line {
-                Ok(request_line) => {
-                    if request_line == "*1\r\n$4\r\nping\r\n" {
-                        stream.write(b"+PONG\r\n").expect("Couldn't write into the stream");
-                    }
-                },
-                Err(e) => {
-                    eprintln!("Error reading line: {}", e);
-                    return;
-                }
-            }
-        },
-        None => {
-            eprintln!("No lines to read from the stream");
-            return;
-        }
-    }
+    let data = b"+PONG\r\n"; 
+    let mut stream = &stream;
+    stream.write(data).expect("Couldn't write into the stream");
 }
