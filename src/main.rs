@@ -8,18 +8,31 @@ fn main(){
         match stream{
             Ok(mut stream) =>{
                 println!("Server working");
-                loop {
-                    //handle_connection(&mut stream);
-                    let data = b"+PONG\r\n"; 
-                    stream.write(data).expect("Couldn't write into the stream");
-                    //let buf_reader = BufReader::new(&mut stream);
-                    let mut buf_reader = [0;256];
-                    let n = stream.read(&mut buf_reader).expect("Couldn't read from the stream");
-                    let buf_reader = &buf_reader[..n];
-                    let buf_reader = std::str::from_utf8(&buf_reader).expect("Couldnt convert to Stringx");
-                    println!("Read from stream {:?}", &buf_reader[..n]);
-
+                let mut buf = [0; 256];
+                match stream.read(&mut buf) {
+                    Ok(_) => {
+                        let request = std::str::from_utf8(&buf).expect("Couldn't convert to String");
+                        if request.contains("ping") {
+                            let data = b"+PONG\r\n"; 
+                            stream.write(data).expect("Couldn't write into the stream");
+                        }
+                    },
+                    Err(e) => {
+                        eprintln!("Couldn't read from the stream: {}", e);
+                    }
                 }
+                //loop {
+                    //handle_connection(&mut stream);
+                    // let data = b"+PONG\r\n"; 
+                    // stream.write(data).expect("Couldn't write into the stream");
+                    //let buf_reader = BufReader::new(&mut stream);
+                    //let mut buf_reader = [0;256];
+                    //let n = stream.read(&mut buf_reader).expect("Couldn't read from the stream");
+                    //let buf_reader = &buf_reader[..n];
+                    //let buf_reader = std::str::from_utf8(&buf_reader).expect("Couldnt convert to Stringx");
+                    //println!("Read from stream {:?}", &buf_reader[..n]);
+
+                //}
             }
             Err(_e) => {
                 println!("Something went wrong couldnt match");
