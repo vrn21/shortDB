@@ -12,13 +12,13 @@ fn main(){
                 match stream.read(&mut buf) {
                     Ok(_) => {
                         let request = std::str::from_utf8(&buf).expect("Couldn't convert to String");
-                        if request.contains("ping") {
+                        //if request.contains("*1\r\n$4\r\nping\r\n") {
                             let data = b"+PONG\r\n"; 
                             stream.write(data).expect("Couldn't write into the stream");
-                        }
+                        //}
                     },
-                    Err(e) => {
-                        eprintln!("Couldn't read from the stream: {}", e);
+                    Err(_e) => {
+                        eprintln!("Couldn't read from the stream: {}", _e);
                     }
                 }
                 //loop {
